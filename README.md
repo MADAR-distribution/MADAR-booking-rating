@@ -1,11 +1,34 @@
-# Public booking (static HTML)
+# MADAR public booking & rating (static HTML)
 
-This folder contains a **static** public booking page that can be shared as:
+Static pages for **booking** and **rating**, deployable on **Netlify** (or any static host with URL rewrites).
+
+## Deploy on Netlify
+
+1. **Create a site** → Import from Git → select this repository.
+2. **Build settings** (auto-detected from `netlify.toml`):
+   - **Build command:** `node scripts/netlify-build.cjs`
+   - **Publish directory:** `.` (repo root)
+3. **Environment variable** (recommended for production):
+   - In Netlify: **Site settings → Environment variables → Add variable**
+   - Name: `API_BASE_URL`
+   - Value: your backend origin, e.g. `https://api.yourdomain.com` (no trailing slash)
+   - On each deploy, the build replaces `window.__API_BASE__ = "http://localhost:8000"` in `index.html`, `booking/index.html`, and `rating/index.html` with that URL.
+4. **CORS:** your API must allow requests from your Netlify site domain (e.g. `https://yoursite.netlify.app`).
+5. **URLs after deploy:**
+   - Landing: `/`
+   - Booking: `/booking/<companyId>` or `/booking/<name>-<companyId>`
+   - Rating: `/rating/<serviceId>`
+
+If you skip `API_BASE_URL`, the build does nothing and pages keep localhost; visitors can still paste the API URL in the on-page config form (stored in `localStorage`).
+
+---
+
+## Booking URLs
 
 - `/booking/<companyName>-<companyId>` (recommended)
 - `/booking/<companyId>` (supported)
 
-It calls your existing public booking API endpoints:
+### Booking API endpoints
 
 - `GET /api/public/booking/get_branches_by_company_id/?company_id=...`
 - `GET /api/public/booking/get_services_by_branch_id/?branch_id=...`
@@ -16,31 +39,24 @@ It calls your existing public booking API endpoints:
 
 ## Files
 
-- `index.html`: simple landing (enter company id).
-- `booking/index.html`: the booking app page.
-- `assets/booking.css`: styles.
-- `assets/booking.js`: booking logic.
+- `index.html`: landing (company id + rating shortcut).
+- `booking/index.html`: booking app.
+- `rating/index.html`: rating app.
+- `assets/booking.css` / `assets/booking.js`: booking UI.
+- `assets/rating.css` / `assets/rating.js`: rating UI.
+- `netlify.toml`: Netlify build, SPA-style rewrites, cache headers.
+- `scripts/netlify-build.cjs`: injects `API_BASE_URL` at build time.
 
 ## Configure API base URL
 
-Set your production API base URL (the equivalent of `NEXT_PUBLIC_API_URL`) in one of these ways:
+1. **Netlify:** set environment variable `API_BASE_URL` (see above).
+2. **Manual:** edit `index.html`, `booking/index.html`, and `rating/index.html` — set `window.__API_BASE__` to your API origin.
+3. **Visitor override:** open the booking/rating page and use the config form (saved in `localStorage`).
 
-1. **Recommended**: edit `booking/index.html` and `index.html` and set:
+## Hosting rewrites
 
-```html
-<script>
-  window.__API_BASE__ = "https://YOUR_PROD_API_BASE_HERE";
-</script>
-```
-
-2. Or open `/booking/<companyId>` and paste the API base URL into the on-page config form (it will store it in `localStorage`).
-
-## Hosting rewrites (for /booking/*)
-
-This is a static site, so you need a rewrite so any `/booking/*` path serves `booking/index.html`.
-
-- **Netlify**: `netlify.toml` is included.
-- **Vercel**: `vercel.json` is included.
+- **Netlify:** `netlify.toml` includes `/booking/*` and `/rating/*` → the correct `index.html` files.
+- **Vercel:** `vercel.json` includes booking rewrites (add rating rewrites there if you use Vercel).
 - **Nginx** (example):
 
 ```nginx
@@ -62,6 +78,7 @@ Then open:
 - `http://localhost:5173/`
 - `http://localhost:5173/booking/<companyName>-<companyId>`
 - `http://localhost:5173/booking/<companyId>`
+- `http://localhost:5173/rating/index.html?serviceId=<serviceId>` (plain static server; Netlify gives `/rating/<serviceId>`)
 
 ## Notes
 

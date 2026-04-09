@@ -1,5 +1,18 @@
+# Static site: booking + rating public pages
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
 [build]
   publish = "."
+  command = "node scripts/netlify-build.cjs"
+
+# Optional: set in Netlify UI → Site settings → Environment variables
+# API_BASE_URL = https://your-api.example.com   (no trailing slash)
+
+# Pretty URLs: /booking/<companyId> and /rating/<serviceId>
+[[redirects]]
+  from = "/booking"
+  to = "/booking/"
+  status = 302
 
 [[redirects]]
   from = "/booking/*"
@@ -7,7 +20,21 @@
   status = 200
 
 [[redirects]]
+  from = "/rating"
+  to = "/rating/"
+  status = 302
+
+[[redirects]]
   from = "/rating/*"
   to = "/rating/index.html"
   status = 200
 
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

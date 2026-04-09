@@ -1,7 +1,9 @@
 {
   "rewrites": [
     { "source": "/booking/:companyId", "destination": "/booking/index.html" },
-    { "source": "/booking/:companyId/:rest*", "destination": "/booking/index.html" }
+    { "source": "/booking/:companyId/:rest*", "destination": "/booking/index.html" },
+    { "source": "/rating/:serviceId", "destination": "/rating/index.html" },
+    { "source": "/rating/:serviceId/:rest*", "destination": "/rating/index.html" }
   ]
 }
 
