@@ -1,0 +1,13 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/booking/*"
+  to = "/booking/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/rating/*"
+  to = "/rating/index.html"
+  status = 200
+

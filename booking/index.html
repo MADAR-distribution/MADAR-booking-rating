@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Booking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/booking.css" />
+    <script>
+      // Local backend default (change this for production).
+      window.__API_BASE__ = "http://localhost:8000";
+    </script>
+  </head>
+  <body>
+    <div class="appShell">
+      <header class="topBar">
+        <div class="topBarInner">
+          <a class="brand" href="/" aria-label="Home">
+            <div class="brandMark" aria-hidden="true">B</div>
+            <div class="brandText">
+              <div class="brandTitle" id="brandTitle">Booking</div>
+              <div class="brandSubtitle" id="brandSubtitle">Public reservation page</div>
+            </div>
+          </a>
+
+          <div class="topBarActions">
+            <button class="btn btnGhost iconBtn" id="themeBtn" type="button" aria-label="Toggle theme">
+              <span class="btnIcon" aria-hidden="true">
+                <svg class="i" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3v2.2M12 18.8V21M4.2 12H3M21 12h-1.2M6 6l-1.6-1.6M19.6 19.6 18 18M6 18l-1.6 1.6M19.6 4.4 18 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </span>
+              <span class="btnLabel" id="themeBtnLabel">Dark</span>
+            </button>
+            <button class="btn btnGhost iconBtn" id="langBtn" type="button" aria-label="Toggle language">
+              <span class="btnIcon" aria-hidden="true">
+                <svg class="i" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M3.6 9h16.8M3.6 15h16.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M12 3c2.6 2.5 4.2 5.7 4.2 9s-1.6 6.5-4.2 9c-2.6-2.5-4.2-5.7-4.2-9s1.6-6.5 4.2-9Z" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </span>
+              <span class="btnLabel" id="langBtnLabel">AR</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="card" id="configCard" hidden>
+          <h1 id="configTitle">Configuration required</h1>
+          <p class="muted" id="configText">
+            This page needs an API base URL to call your public booking endpoints.
+          </p>
+
+          <form id="configForm" class="stack" autocomplete="off">
+            <div class="field">
+              <label for="apiBase">API Base URL</label>
+              <input id="apiBase" name="apiBase" placeholder="https://api.yourdomain.com" />
+              <div class="help" id="apiHelp">We will store it in your browser for next time.</div>
+            </div>
+            <div class="row">
+              <button class="btn btnPrimary" type="submit" id="saveApiBtn">Save & Reload</button>
+              <a class="btn btnGhost" href="/" id="backHome">Back</a>
+            </div>
+          </form>
+        </section>
+
+        <section class="card bookingCard" id="mainCard" hidden>
+          <div class="bookingHero">
+            <div class="bookingHeroLeft">
+              <div class="eyebrow">
+                <span class="dot"></span>
+                <span id="brandSubtitle">Public reservation page</span>
+              </div>
+              <h1 id="pageTitle">Book your turn</h1>
+              <p class="muted" id="pageSubtitle">
+                Select branch and service, then enter your details.
+              </p>
+
+              <div class="bookingHeroMeta">
+                <div class="pill" id="companyPill" title="Company ID"></div>
+                <div class="trustRow" aria-hidden="true">
+                  <span class="trustPill" id="trustFast">Fast</span>
+                  <span class="trustPill" id="trustSecure">Secure</span>
+                  <span class="trustPill" id="trustMobile">Mobile-ready</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bookingHeroRight" aria-hidden="true">
+              <div class="heroVisual">
+                <div class="heroRing"></div>
+                <div class="heroCardMini">
+                  <div class="miniTitle" id="miniTodayTitle">Today</div>
+                  <div class="miniValue" id="miniTodayValue">Live slots</div>
+                </div>
+                <div class="heroCardMini mini2">
+                  <div class="miniTitle" id="miniStatusTitle">Status</div>
+                  <div class="miniValue" id="miniStatusValue">Track bookings</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tabs premiumTabs" role="tablist" aria-label="Booking tabs">
+            <button class="tab tabActive" role="tab" aria-selected="true" id="tabNew" data-tab="new" type="button"></button>
+            <button class="tab" role="tab" aria-selected="false" id="tabMy" data-tab="my" type="button"></button>
+            <button class="tab" role="tab" aria-selected="false" id="tabPre" data-tab="pre" type="button"></button>
+          </div>
+
+          <div class="bookingLayout">
+            <div class="bookingContent">
+              <div class="tabPanel" id="panelNew" role="tabpanel">
+                <div class="stepHeader">
+                  <div class="stepBadge">1</div>
+                  <div class="stepText">
+                    <div class="stepTitle" id="stepNewTitle">New booking</div>
+                    <div class="muted small" id="stepNewDesc">Pick a branch and service, then confirm your details.</div>
+                  </div>
+                </div>
+
+                <form id="turnForm" class="formGrid" autocomplete="off">
+                  <div class="field">
+                    <label for="branchSelect" id="branchLabel">Branch</label>
+                    <select id="branchSelect" required></select>
+                    <div class="help" id="branchHelp">Choose a branch to see its services.</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="serviceSelect" id="serviceLabel">Service</label>
+                    <select id="serviceSelect" required disabled></select>
+                    <div class="help" id="serviceHelp">Services load after choosing a branch.</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="nameInput" id="nameLabel">Name</label>
+                    <input id="nameInput" required placeholder="Your name" />
+                  </div>
+
+                  <div class="field">
+                    <label for="phoneInput" id="phoneLabel">Phone</label>
+                    <input id="phoneInput" required placeholder="+20..." />
+                  </div>
+
+                  <div class="row actionsRow">
+                    <button class="btn btnPrimary" id="bookBtn" type="submit"></button>
+                    <button class="btn btnGhost" id="resetBtn" type="button"></button>
+                  </div>
+
+                  <div class="alert" id="turnResult" hidden></div>
+                </form>
+              </div>
+
+              <div class="tabPanel" id="panelMy" role="tabpanel" hidden>
+                <div class="stepHeader">
+                  <div class="stepBadge">2</div>
+                  <div class="stepText">
+                    <div class="stepTitle" id="stepTrackTitle">Track my bookings</div>
+                    <div class="muted small" id="stepTrackDesc">Enter your reference to view status and queue position.</div>
+                  </div>
+                </div>
+
+                <form id="refForm" class="refBar" autocomplete="off">
+                  <div class="field grow">
+                    <label for="refInput" id="refLabel">Booking reference</label>
+                    <input id="refInput" placeholder="e.g. ABC123" required />
+                  </div>
+                  <div class="field">
+                    <label>&nbsp;</label>
+                    <button class="btn btnPrimary" id="refSearchBtn" type="submit"></button>
+                  </div>
+                </form>
+
+                <div class="muted small" id="refHelp">
+                  This uses a device id stored in your browser to retrieve your bookings.
+                </div>
+
+                <div class="list" id="bookingList"></div>
+              </div>
+
+              <div class="tabPanel" id="panelPre" role="tabpanel" hidden>
+                <div class="stepHeader">
+                  <div class="stepBadge">3</div>
+                  <div class="stepText">
+                    <div class="stepTitle" id="stepPreTitle">Pre-booking</div>
+                    <div class="muted small" id="preInfo">
+                      Pre-booking requires selecting a service that supports pre-booking, then choosing a date and slot.
+                    </div>
+                  </div>
+                </div>
+
+                <form id="preForm" class="formGrid" autocomplete="off">
+                  <div class="field">
+                    <label for="preBranchSelect" id="preBranchLabel">Branch</label>
+                    <select id="preBranchSelect" required></select>
+                  </div>
+
+                  <div class="field">
+                    <label for="preServiceSelect" id="preServiceLabel">Pre-booking service</label>
+                    <select id="preServiceSelect" required disabled></select>
+                    <div class="help" id="preServiceHelp">Only services with pre-booking enabled appear here.</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="preDateInput" id="preDateLabel">Date</label>
+                    <input id="preDateInput" type="date" required />
+                  </div>
+
+                  <div class="field">
+                    <label id="preSlotLabel">Selected slot</label>
+                    <div class="pill" id="preSlotPill">—</div>
+                    <div class="help" id="preSlotHelp">Pick a slot from the list on the right.</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="preNameInput" id="preNameLabel">Name</label>
+                    <input id="preNameInput" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="prePhoneInput" id="prePhoneLabel">Phone</label>
+                    <input id="prePhoneInput" required placeholder="+20..." />
+                  </div>
+
+                  <div class="field">
+                    <label id="priceLabel">Price</label>
+                    <div class="pill" id="pricePill">—</div>
+                  </div>
+
+                  <div class="row actionsRow">
+                    <button class="btn btnPrimary" id="preBookBtn" type="submit"></button>
+                    <button class="btn btnGhost" id="preResetBtn" type="button"></button>
+                  </div>
+
+                  <div class="alert" id="preResult" hidden></div>
+                </form>
+              </div>
+            </div>
+
+            <aside class="bookingSide" aria-label="Schedule panel">
+              <div class="sideCard">
+                <div class="sideHeader">
+                  <div class="sideTitle" id="scheduleTitle">Service schedule</div>
+                  <button class="btn btnTiny btnGhost" id="refreshScheduleBtn" type="button">Refresh</button>
+                </div>
+                <div class="muted small" id="scheduleHint">Choose a service to load today’s available slots.</div>
+                <div class="slotList" id="slotList"></div>
+              </div>
+
+              <div class="sideCard" id="preSideCard" hidden>
+                <div class="sideHeader">
+                  <div class="sideTitle" id="preSlotsTitle">Available slots</div>
+                  <button class="btn btnTiny btnGhost" id="preRefreshBtn" type="button">Refresh</button>
+                </div>
+                <div class="slotList" id="preSlotList"></div>
+              </div>
+
+              <div class="sideCard subtle">
+                <div class="sideTitle" id="tipsTitle">Tips</div>
+                <ul class="tips">
+                  <li id="tip1">Use your real phone number to receive updates.</li>
+                  <li id="tip2">Switch to “My bookings” to track your status.</li>
+                  <li id="tip3">For pre-booking, select a slot then confirm.</li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="card" id="errorCard" hidden>
+          <h1 id="errorTitle">Error</h1>
+          <p class="muted" id="errorText"></p>
+          <div class="row">
+            <a class="btn btnPrimary" href="/" id="goHomeBtn">Home</a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footerInner">
+          <span class="muted small" id="footerText">© 2026 MADAR Booking System. All Rights Reserved</span>
+          <span class="muted small">Powered by <strong>MADAR-distribution</strong></span>
+        </div>
+      </footer>
+    </div>
+
+    <script src="/assets/booking.js"></script>
+  </body>
+</html>

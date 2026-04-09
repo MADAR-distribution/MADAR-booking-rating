@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Public Booking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/booking.css" />
+    <script>
+      // Local backend default (change this for production).
+      window.__API_BASE__ = "http://localhost:8000";
+    </script>
+  </head>
+  <body>
+    <div class="appShell">
+      <header class="topBar">
+        <div class="topBarInner">
+          <div class="brand">
+            <div class="brandMark" aria-hidden="true">B</div>
+            <div class="brandText">
+              <div class="brandTitle">Booking</div>
+              <div class="brandSubtitle">Public reservation page</div>
+            </div>
+          </div>
+          <div class="topBarActions">
+            <button class="btn btnGhost iconBtn" id="themeBtn" type="button" aria-label="Toggle theme">
+              <span class="btnIcon" aria-hidden="true">
+                <svg class="i" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3v2.2M12 18.8V21M4.2 12H3M21 12h-1.2M6 6l-1.6-1.6M19.6 19.6 18 18M6 18l-1.6 1.6M19.6 4.4 18 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </span>
+              <span class="btnLabel" id="themeBtnLabel">Dark</span>
+            </button>
+            <a class="btn btnGhost" href="/booking/">Open booking</a>
+            <a class="btn btnGhost" href="/rating/">Open rating</a>
+          </div>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="card heroCard">
+          <h1>Booking page for your visitors</h1>
+          <p class="muted">
+            Share a link like <code>/booking/&lt;companyName&gt;-&lt;companyId&gt;</code> (or just <code>/booking/&lt;companyId&gt;</code>). Visitors can book a turn or schedule an appointment in a clean, mobile-friendly flow.
+          </p>
+
+          <form id="companyForm" class="grid2" autocomplete="off">
+            <div class="field">
+              <label for="companyId">Company ID</label>
+              <input id="companyId" name="companyId" placeholder="e.g. 123" required />
+              <div class="help">This id comes from your backend (public booking API).</div>
+            </div>
+            <div class="field">
+              <label for="companyName">Company name (optional)</label>
+              <input id="companyName" name="companyName" placeholder="e.g. MADAR Medical" />
+              <div class="help">Used only to make the URL more readable. The id is what the API uses.</div>
+            </div>
+            <div class="field">
+              <label>&nbsp;</label>
+              <button class="btn btnPrimary" type="submit">Open booking</button>
+              <div class="help">Opens <code>/booking/&lt;companyName&gt;-&lt;companyId&gt;</code>.</div>
+            </div>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>Rating page for your visitors</h2>
+          <p class="muted">
+            Share a link like <code>/rating/&lt;serviceId&gt;</code> (or <code>/rating/?serviceId=&lt;serviceId&gt;</code>). Visitors can submit a rating and see recent feedback for that service.
+          </p>
+
+          <form id="serviceForm" class="grid2" autocomplete="off">
+            <div class="field">
+              <label for="serviceId">Service ID</label>
+              <input id="serviceId" name="serviceId" placeholder="e.g. 42" required />
+              <div class="help">This id comes from your backend (public booking API).</div>
+            </div>
+            <div class="field">
+              <label>&nbsp;</label>
+              <button class="btn btnPrimary" type="submit">Open rating</button>
+              <div class="help">Opens <code>/rating/&lt;serviceId&gt;</code>.</div>
+            </div>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>API base URL</h2>
+          <p class="muted">
+            This page uses <code>window.__API_BASE__</code>. For local testing it’s set to <code>http://localhost:8000</code>.
+          </p>
+          <pre class="codeBlock"><code>&lt;script&gt;
+  window.__API_BASE__ = "https://YOUR_PROD_API_BASE_HERE";
+&lt;/script&gt;</code></pre>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footerInner">
+          <span class="muted">Static public booking page</span>
+          <span class="muted">Powered by <strong>MADAR-distribution</strong></span>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        // Theme toggle (shared with booking page).
+        const THEME_KEY = "public_booking_theme";
+        const getTheme = () => localStorage.getItem(THEME_KEY) || "auto";
+        const applyTheme = (t) => {
+          if (t === "auto") document.documentElement.removeAttribute("data-theme");
+          else document.documentElement.setAttribute("data-theme", t);
+          const lbl = document.getElementById("themeBtnLabel");
+          if (lbl) lbl.textContent = (t === "dark") ? "Light" : "Dark";
+        };
+        const nextTheme = (t) => (t === "dark" ? "light" : "dark");
+        applyTheme(getTheme());
+        const themeBtn = document.getElementById("themeBtn");
+        if (themeBtn) {
+          themeBtn.addEventListener("click", () => {
+            const cur = getTheme();
+            const normalized = (cur === "auto")
+              ? (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+              : cur;
+            const n = nextTheme(normalized);
+            localStorage.setItem(THEME_KEY, n);
+            applyTheme(n);
+          });
+        }
+
+        const form = document.getElementById("companyForm");
+        const input = document.getElementById("companyId");
+        const nameInput = document.getElementById("companyName");
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const companyId = (input.value || "").trim();
+          if (!companyId) return;
+          const companyName = (nameInput && nameInput.value ? nameInput.value : "").trim();
+          const segment = companyName ? `${companyName}-${companyId}` : companyId;
+          window.location.href = "/booking/" + encodeURIComponent(segment);
+        });
+
+        const serviceForm = document.getElementById("serviceForm");
+        const serviceIdInput = document.getElementById("serviceId");
+        if (serviceForm && serviceIdInput) {
+          serviceForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const serviceId = (serviceIdInput.value || "").trim();
+            if (!serviceId) return;
+            window.location.href = "/rating/" + encodeURIComponent(serviceId);
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Rating</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/booking.css" />
+    <link rel="stylesheet" href="/assets/rating.css" />
+    <script>
+      // Local backend default (change this for production).
+      window.__API_BASE__ = "http://localhost:8000";
+    </script>
+  </head>
+  <body>
+    <div class="appShell">
+      <header class="topBar">
+        <div class="topBarInner">
+          <a class="brand" href="/" aria-label="Home">
+            <div class="brandMark" aria-hidden="true">R</div>
+            <div class="brandText">
+              <div class="brandTitle" id="brandTitle">Rating</div>
+              <div class="brandSubtitle" id="brandSubtitle">Public rating page</div>
+            </div>
+          </a>
+
+          <div class="topBarActions">
+            <button class="btn btnGhost iconBtn" id="themeBtn" type="button" aria-label="Toggle theme">
+              <span class="btnIcon" aria-hidden="true">
+                <svg class="i" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3v2.2M12 18.8V21M4.2 12H3M21 12h-1.2M6 6l-1.6-1.6M19.6 19.6 18 18M6 18l-1.6 1.6M19.6 4.4 18 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </span>
+              <span class="btnLabel" id="themeBtnLabel">Dark</span>
+            </button>
+            <button class="btn btnGhost iconBtn" id="langBtn" type="button" aria-label="Toggle language">
+              <span class="btnIcon" aria-hidden="true">
+                <svg class="i" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M3.6 9h16.8M3.6 15h16.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M12 3c2.6 2.5 4.2 5.7 4.2 9s-1.6 6.5-4.2 9c-2.6-2.5-4.2-5.7-4.2-9s1.6-6.5 4.2-9Z" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </span>
+              <span class="btnLabel" id="langBtnLabel">AR</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="card" id="configCard" hidden>
+          <h1 id="configTitle">Configuration required</h1>
+          <p class="muted" id="configText">
+            This page needs an API base URL to call your public rating endpoints.
+          </p>
+
+          <form id="configForm" class="stack" autocomplete="off">
+            <div class="field">
+              <label for="apiBase">API Base URL</label>
+              <input id="apiBase" name="apiBase" placeholder="https://api.yourdomain.com" />
+              <div class="help" id="apiHelp">We will store it in your browser for next time.</div>
+            </div>
+            <div class="row">
+              <button class="btn btnPrimary" type="submit" id="saveApiBtn">Save & Reload</button>
+              <a class="btn btnGhost" href="/" id="backHome">Back</a>
+            </div>
+          </form>
+        </section>
+
+        <section class="card" id="mainCard" hidden>
+          <div class="ratingHero">
+            <div class="ratingHeroInner">
+              <div class="ratingHeroLeft">
+                <div class="eyebrow">
+                  <span class="dot"></span>
+                  <span id="heroSubtitle">Share your feedback</span>
+                </div>
+                <h1 id="pageTitle">Rate your service</h1>
+                <p class="muted" id="pageSubtitle">
+                  Select a rating and optionally add a comment.
+                </p>
+                <div class="pillRow">
+                  <div class="pill" id="servicePill" title="Service">Service: —</div>
+                  <div class="pill" id="branchPill" title="Branch">Branch: —</div>
+                </div>
+              </div>
+
+              <div class="ratingHeroRight" aria-hidden="true">
+                <div class="ratingHeroPanel">
+                  <div class="ratingHeroPanelTop">
+                    <div class="muted small" id="avgLabel">Average</div>
+                    <div class="heroAvg">
+                      <span class="heroAvgValue" id="avgValue">—</span>
+                      <span class="heroAvgOutOf">/ 5</span>
+                    </div>
+                  </div>
+                  <div class="heroStatsRow">
+                    <div class="heroStat">
+                      <div class="muted small" id="countLabel">Ratings</div>
+                      <div class="heroStatValue" id="countValue">—</div>
+                    </div>
+                    <div class="heroStat heroStatHint">
+                      <div class="muted small" id="hintLabel">Tip</div>
+                      <div class="muted small" id="hintValue">Tap a star to rate</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ratingLayout ratingLayoutSingle">
+            <section class="ratingFormCol">
+              <div class="stepHeader">
+                <div class="stepBadge">1</div>
+                <div class="stepText">
+                  <div class="stepTitle" id="stepTitle">Your rating</div>
+                  <div class="muted small" id="stepDesc">Tap a star, then submit.</div>
+                </div>
+              </div>
+
+              <form id="ratingForm" class="stack" autocomplete="off">
+                <div class="field">
+                  <label id="starsLabel">Rating</label>
+                  <div class="stars" id="stars" role="radiogroup" aria-label="Rating"></div>
+                  <div class="muted small" id="ratingPreview" aria-live="polite"></div>
+                  <div class="help" id="starsHelp">5 is the best.</div>
+                  <input type="hidden" id="ratingValue" name="ratingValue" value="" />
+                </div>
+
+                <div class="field">
+                  <label for="nameInput" id="nameLabel">Name (optional)</label>
+                  <input id="nameInput" placeholder="Your name" />
+                </div>
+
+                <div class="field">
+                  <label for="phoneInput" id="phoneLabel">Phone (optional)</label>
+                  <input id="phoneInput" placeholder="+20..." />
+                </div>
+
+                <div class="field">
+                  <label for="commentInput" id="commentLabel">Comment (optional)</label>
+                  <textarea id="commentInput" rows="4" placeholder="Tell us what went well or what we can improve"></textarea>
+                </div>
+
+                <div class="row actionsRow">
+                  <button class="btn btnPrimary" id="submitBtn" type="submit">Submit</button>
+                  <button class="btn btnGhost" id="resetBtn" type="button">Reset</button>
+                </div>
+
+                <div class="alert" id="resultAlert" hidden></div>
+              </form>
+            </section>
+          </div>
+        </section>
+
+        <section class="card" id="errorCard" hidden>
+          <h1 id="errorTitle">Error</h1>
+          <p class="muted" id="errorText"></p>
+          <div class="row">
+            <a class="btn btnPrimary" href="/" id="goHomeBtn">Home</a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footerInner">
+          <span class="muted small" id="footerText">© 2026 MADAR Booking System. All Rights Reserved</span>
+          <span class="muted small">Powered by <strong>MADAR-distribution</strong></span>
+        </div>
+      </footer>
+    </div>
+
+    <script src="/assets/rating.js"></script>
+  </body>
+</html>
+

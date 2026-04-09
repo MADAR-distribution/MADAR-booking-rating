@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/booking/:companyId", "destination": "/booking/index.html" },
+    { "source": "/booking/:companyId/:rest*", "destination": "/booking/index.html" }
+  ]
+}
+
