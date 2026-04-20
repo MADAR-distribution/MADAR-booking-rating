@@ -4,13 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Booking</title>
+    <link rel="icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/booking.css" />
     <script>
       // Local backend default (change this for production).
-      window.__API_BASE__ = "http://localhost:8000";
+      window.__API_BASE__ = "https://madar-queue.com";
     </script>
   </head>
   <body>
@@ -18,7 +19,10 @@
       <header class="topBar">
         <div class="topBarInner">
           <a class="brand" href="/" aria-label="Home">
-            <div class="brandMark" aria-hidden="true">B</div>
+            <div class="brandMark" aria-hidden="true">
+              <img class="brandLogo brandLogoLight" src="/logo-light.png" alt="" />
+              <img class="brandLogo brandLogoDark" src="/logo-dark.png" alt="" />
+            </div>
             <div class="brandText">
               <div class="brandTitle" id="brandTitle">Booking</div>
               <div class="brandSubtitle" id="brandSubtitle">Public reservation page</div>
@@ -283,7 +287,7 @@
       <footer class="footer">
         <div class="footerInner">
           <span class="muted small" id="footerText">© 2026 MADAR Booking System. All Rights Reserved</span>
-          <span class="muted small">Powered by <strong>MADAR-distribution</strong></span>
+          <span class="muted small">Powered by <a href="https://madar-queue.com/" target="_blank" rel="noopener noreferrer"><strong>MADAR-distribution</strong></a></span>
         </div>
       </footer>
     </div>

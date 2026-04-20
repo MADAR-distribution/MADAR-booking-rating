@@ -19,7 +19,7 @@ Static pages for **booking** and **rating**, deployable on **Netlify** (or any s
    - Booking: `/booking/<companyId>` or `/booking/<name>-<companyId>`
    - Rating: `/rating/<serviceId>`
 
-If you skip `API_BASE_URL`, the build does nothing and pages keep localhost; visitors can still paste the API URL in the on-page config form (stored in `localStorage`).
+If you skip `API_BASE_URL`, the build does nothing and pages keep their default; visitors can still paste the API URL in the on-page config form (stored in `localStorage`).
 
 ---
 
